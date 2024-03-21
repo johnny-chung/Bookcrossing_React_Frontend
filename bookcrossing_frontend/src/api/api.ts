@@ -1,27 +1,52 @@
 import { BookDetailsProps } from "../types/types";
 
-const ReserveBookAPI = async function (bookDetails: BookDetailsProps) {
-  try {
-    const response = await fetch("/api/reserve-book", {
-      method: "POST",
-      body: JSON.stringify(bookDetails),
-    });
+import db from './db'
+import Book from '../types/model'
 
-    if (response.ok) {
-      console.log("Book reserved successfully!");
-      return true;
-    } else {
-      console.error("Error reserving book:", response.statusText);
-      return false;
+const reserveBookAPI = async function (userId: string, bookId: string) {
+  try {
+    const book = await Book.findById(bookId);
+
+    if (!book) {
+      console.error('Book not found');
+      return;
     }
+    if (!book.reservations) {
+      book.reservations = [];
+    }
+
+    // Add the user ID to the reservations array
+    book.reservations.push(userId);
+
+    // Save the updated book document
+    await book.save();
+
+    console.log('Reservation successful');
+    return true
   } catch (error) {
-    console.error("Error reserving book:", error);
-    return false;
+    console.error('Error reserving book:', error);
+    return false
+  }
+  //   const response = await fetch("/api/reserve-book", {
+  //     method: "POST",
+  //     body: JSON.stringify(bookDetails),
+  //   });
+
+  //   if (response.ok) {
+  //     console.log("Book reserved successfully!");
+  //     return true;
+  //   } else {
+  //     console.error("Error reserving book:", response.statusText);
+  //     return false;
+  //   }
+  // } catch (error) {
+  //   console.error("Error reserving book:", error);
+  //   return false;
   }
 };
 
 // true if book is reserved
-const CheckReservationAPI = async function (bookDetails: BookDetailsProps) {
+const checkReservationAPI = async function (bookDetails: BookDetailsProps) {
   try {
     const response = await fetch("/api/check-reservation", {
       method: "POST",
@@ -46,4 +71,4 @@ const CheckReservationAPI = async function (bookDetails: BookDetailsProps) {
   }
 };
 
-export { ReserveBookAPI, CheckReservationAPI };
+export { reserveBookAPI, checkReservationAPI };

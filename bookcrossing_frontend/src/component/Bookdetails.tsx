@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Tailwind from "tailwindcss";
 
-import { ReserveBookAPI, CheckReservationAPI } from "../api/api";
+import { reserveBookAPI, checkReservationAPI } from "../api/api";
 
 import { BookDetailsProps } from "../types/types";
 
@@ -10,7 +10,7 @@ function BookDetails({ bookDetails }: { bookDetails: BookDetailsProps }) {
 
   const handleReserveBookClick = async function () {
     try {
-      const response = await ReserveBookAPI(bookDetails);
+      const response = await reserveBookAPI("00000", bookDetails._id);
       if (response) {
         setIsReserved(true);
       }
@@ -21,7 +21,7 @@ function BookDetails({ bookDetails }: { bookDetails: BookDetailsProps }) {
 
   const checkBookReservationStatus = async function () {
     try {
-      const response = await CheckReservationAPI(bookDetails);
+      const response = await checkReservationAPI(bookDetails);
       if (response) {
         setIsReserved(true);
       }
@@ -30,9 +30,9 @@ function BookDetails({ bookDetails }: { bookDetails: BookDetailsProps }) {
     }
   };
 
-  //   useEffect(() => {
-  //     checkBookReservationStatus();
-  //   }, []);
+  // useEffect(() => {
+  //   checkBookReservationStatus();
+  // }, []);
 
   const [selectedTab, setSelectedTab] = useState("description");
 
@@ -47,7 +47,9 @@ function BookDetails({ bookDetails }: { bookDetails: BookDetailsProps }) {
         <div className="h-full flex flex-col justify-between">
           {/* Top left box */}
           <div className="flex flex-col gap-2">
-            <p className="mb-2 text-gray-700 font-bold">by {bookDetails.author}</p>
+            <p className="mb-2 text-gray-700 font-bold">
+              by {bookDetails.author}
+            </p>
             <span className="text-gray-500">
               {bookDetails.publisher}, {String(bookDetails.year)}
             </span>
